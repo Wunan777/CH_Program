@@ -7,98 +7,26 @@
 	   * { margin: 0; padding: 0;}
 	   html { width: 100%; height: 100%; }
 	   body { width: 100%; height: 100%; font-family: 微软雅黑; font-size: 14px;}
-	   p { color: white; font-family: 微软雅黑; line-height: 22px; font-size: 14px; margin-left: 4px;} 
-      
-	    #console { width: 80%; height: 80%; background: #000000; margin: 0 auto;}
+	   p { color: white; font-family: 微软雅黑; line-height: 22px; min-height: 22px; font-size: 14px; margin-left: .8px; } 
+	    #console { width: 80%; height: 80%; background: #000000; margin: 0 auto; overflow-x: hidden;}
 	    #control_div { width: 80%; height: 14%; margin: 0 auto; 
 	    	       background: rgb(214,217,223); }
 	     #button_area { width: 34%; height: 100%; float: left; background: red;}
-
 	     #register { width:63%; height: 100%; float: left; background: blue}
-
 	      #register dd { background: yellow;margin-left: 4px; margin-top: 4px; float: left;} 
 	      #register dd > span { width: 40px; height: 26px; margin-left: 4px;  background:rgb(255,255,255); }
+        .rel { position: relative;}
+        .abs { position: absolute;}
 	</style>
-	<script type="text/javascript">
-	  window.onload = function(){
-	  	var console_div = document.getElementById('console');
-	  	 // 当前正在编辑行
-	  	var keycode; // 按键码
-	  	var realkey; // 字符
-       
-        document.addEventListener("keydown",keyDown);
-
-
-
-        
-	  	function keyDown(e) {
-	  		  var edit_p = document.getElementById('now');
-	  	       // Hack
-	  	      if (navigator.appName == "Microsoft Internet Explorer")//IE
-	  	      {
-	  	           keycode = event.keyCode;
-	  	           realkey = String.fromCharCode(event.keyCode);
-	  	      }else {                                                // Firefox,Opera
-	  	           keycode = e.which;
-	  	           realkey = String.fromCharCode(e.which);
-	  	      }
-	  	      console.log(keycode);
-	  	      // 1字母 2数字 3空格 4逗号  以及回车,退格 其余忽略 
-                                                   // ASCII
-              if(  (keycode > 47 && keycode <58 )  // 0:48 9:57
-                 ||(keycode > 64 && keycode < 91)  // A:65 Z:90
-                 || keycode == 32   )              // 空格:32
-              {
-              	edit_p.innerHTML += realkey;
-              }
-              else if( keycode == 188)// 逗号:188
-              {
-                edit_p.innerHTML += ',';
-              }
-              else if( keycode == 8) // 退格
-              {
-              	if( edit_p.innerHTML.length > 1 ) // 需要剩余 >
-              	{
-                   edit_p.innerHTML = edit_p.innerHTML.slice(0,-1); 
-              	}
-              }
-              else if( keycode == 13) //回车
-              {
-                 newLine(edit_p);
-              }
-
-	  	  }
-
-	  	  // 换行
-	  	  function newLine(old_p){
-	  	  	var new_p = document.createElement("p");
-	  	  	var max   = console_div.offsetHeight;
-	  	  	var p     = console_div.getElementsByTagName('p');
-	  	  	var now_height = p.length * 22;
-
-	  	  	old_p.setAttribute("id","");
-	  	  	new_p.setAttribute("id","now");
-
-	  	  	new_p.innerHTML = ">";
-	  	  	console_div.appendChild(new_p);
-            
-	  	  	if( now_height > max )
-	  	  	{
-               console_div.removeChild( p[0] );
-	  	  	}
-	  	  }
-	  	 
-	  }
-	</script>
 </head>
 <body>
 	<div id="console">
 		<p>TEC-XP Simulation Program</p>
 		<p>Version 2.0 2016.3.28</p>
 		<p>Computer Architectur DUT</p>
-        <p id="now">></p>
+        <p id="now">> </p>
 	</div>
-	<div id="control_div">
+<!-- 	<div id="control_div">
 		 <div id="button_area">
 		 	<div id="Reset">Reset</div>
 		 	<div id="Start">Start</div>
@@ -119,6 +47,354 @@
 		 	 	<dd>R0<span>0000</span></dd>
 		 	 </dl>
 		 </div>
+ -->
+
+		  
 	</div>
+
 </body>
+
+    <script type="text/javascript" src="js/A_To_E.js"></script>
+    <script type="text/javascript" src="js/E_To_A.js"></script>
+    <script type="text/javascript" src="js/Read.js"></script>
+    <script type="text/javascript">
+
+   // 五种类型参数 R_0,R_1,OFFSET,PORT,MVRD_NEXT
+   var table = [
+              "ADD 00 R_2", 
+              "SUB 01 R_2",
+              "AND 02 R_2",
+              "CMP 03 R_2",
+              "XOR 04 R_2",
+              "TEST 05 R_2",
+              "OR 06 R_2",
+              "MVRR 07 R_2",
+              "DEC 08 R_1",
+              "INC 09 R_1",
+              "SHL 0A R_1",
+              "SHR 0B R_1",
+              "JR 41 OFFSET",
+              "JRC 44 OFFSET",
+              "JRNC 45 OFFSET",
+              "JRZ 46 OFFSET",
+              "JRNZ 47 OFFSET",
+              "JMPA 80 OFFSET",
+              "IN 82 PORT",
+              "PUSH 85 R_1",
+              "OUT 86 PORT",
+              "POP 87 R_1",
+              "MVRD 88 R_1",
+              "CALA CE OFFSET",
+              "EI 6E NONE",
+              "DI 6F NONE",
+              "RET 8F NONE",
+              "IRET EF NONE"
+             ];
+  var init_line_len = 5; //&gt\b A 2000 >和空格
+  var command_line_len = 7;
+  var memory = [];
+  var PC = 0;      // 10进制
+  var r0,r1,r2,r3;//r0 - r8
+  var Port_80;
+  var Port_81;
+    window.onload = function(){  
+      
+       // 当前正在编辑行
+      var keycode; // 按键码
+      var realkey; // 字符
+        // 字符串数组
+      var status = 0; // 初始状态 分为3个状态 其余两个为 1 : A   2 : E 
+     // document.addEventListener("keydown",keyDown);  
+      document.onkeydown = keyDown;
+      function keyDown(e) 
+      {     
+            var edit_p = document.getElementById('now');            // 正在编辑的一行
+             // Hack
+            if (navigator.appName == "Microsoft Internet Explorer")//IE
+            {
+                 keycode = event.keyCode;
+                 realkey = String.fromCharCode(event.keyCode);
+            }else {                                                // Firefox,Opera
+                 keycode = e.which;
+                 realkey = String.fromCharCode(e.which);
+            }
+        
+            // 1字母 2数字 3空格 4逗号  以及回车,退格 其余忽略 
+                                                   // ASCII
+              if(  (keycode > 47 && keycode <58 )  // 0:48 9:57
+                 ||(keycode > 64 && keycode < 91)  // A:65 Z:90
+                )           
+              {
+                edit_p.innerHTML += realkey;
+              }
+              else if( keycode == 32)// 空格:32
+              {
+                 edit_p.innerHTML += " " ;
+                 console.log(edit_p.innerHTML.length);
+              }
+              else if( keycode == 188)// 逗号:188
+              {
+                edit_p.innerHTML += ',';
+              }
+              else if( keycode == 8) // 退格
+              { 
+                if( status == 0 && edit_p.innerHTML.length > init_line_len ) // 在初始状态下需要剩余 >和空格
+                {  console.log(  edit_p.innerHTML.length +"  " + init_line_len);
+                   edit_p.innerHTML = edit_p.innerHTML.slice(0,-1); 
+                }
+                else if( (status == 1 || status ==2)  && edit_p.innerHTML.length > 7) //多了两个空格
+                {  
+                   edit_p.innerHTML = edit_p.innerHTML.slice(0,-1); 
+                }
+                else
+                {
+                  console.log("不可再删除了");
+                }
+                return false;   // 返回false 去除浏览器自带回退
+              }
+              else if( keycode == 13) //回车 >E 2000 将>去掉
+              {                       //只需 ->解析并输出 
+                 if( status == 0)
+                 {
+                  parse_line(edit_p.innerHTML.slice(init_line_len));  // 将本行内容传入解析函数
+                 }
+                 else if( status == 1 || 2)
+                 {
+                  parse_line(edit_p.innerHTML.slice(command_line_len));
+                 }
+ 
+              }
+              
+              
+      }
+
+ 
+          function parse_line(content)
+          {  //内容字符串被传入
+             
+                            //1 先判断是否命令合法
+                            //2 对应状态->具体解析命令和数字
+
+                        if( status == 0)
+                        { 
+                          console.log("content:"+content);
+                          if( command_legal(content) )
+                          {
+                                if( content == "")
+                                {
+                                  newLine('> ');
+                                }
+                                else   
+                                {       
+                                      content = content.replace(/ /g,'');
+                                      PC = parseInt( get_num(content),16 );
+                                        
+                                      if( content[0] == 'A' ) // 解析到有A命令
+                                      {   
+                                             new_line_num();                
+                                             status = 1;                         
+                                      }
+                                      else if( content[0] == 'E' ) // 解析到有E命令
+                                      { 
+                                           
+                                            new_line_num();                
+                                            status = 2;
+                                      }
+                                      else if( content[0] == 'U') // 显示出保存内容
+                                      {   
+                                         PC = parseInt( content.replace("U","").replace(" ","") , 16);
+                                         Read();
+                                      }
+                                      else if( content[0] == 'G')
+                                      {
+
+                                      }
+                                  }
+                          }
+                          else
+                          {
+                            error();
+                            newLine("> ");
+                          }
+
+                         } // staus == 0结尾
+                         else if( status == 1)  // 当前为A状态下
+                         {       
+                                 if( content == "")
+                                 {
+                                   status = 0; // 在A状态下遇到 空串退出到0状态
+                                   newLine("> ");
+                                 }
+                                 else
+                                 {
+                                   if( A_To_E(content,memory,PC) )
+                                   {
+                                      new_line_num();
+                                   }
+                                   else
+                                   {
+                                      error();
+                                      new_line_num();
+                                   }
+                                 }
+                               
+                         }
+                         else if( status == 2) // 当前为E状态下
+                         {                    // 任何值都可以被写入
+                                 if( content == "")
+                                 {
+                                    status = 0; // 在A状态下遇到 空串退出到0状态
+                                    newLine("> ");
+                                 }
+                                 else
+                                 {
+                                   memory[PC++] = content;
+                                   new_line_num();
+                                 }
+                         }
+
+          }// parse_line尾部
+
+
+
+
+    }// -- window.onload 结尾
+
+
+    function command_legal(str)
+    {
+          if( str == "")
+          {
+            return true;                                   
+          }
+        // 合法 E 2000  A 2000 U 2000或者空
+        if( (/^(E|A|U|G)\s+([0-9A-F]{1,4})$/).exec(str)!=null )
+        {
+          return true
+        }
+            else
+            {
+              return  false;                                       // false
+            }
+            
+    }
+    function get_num(content)    // 传入字符串  A|E|U|G2300
+    {     
+          arr = content.split('');
+          arr.shift();
+          content = arr.join(''); // 2300
+          return content;
+
+      }
+    function A_Get_MvrdNum(content)
+    {     
+        content = content.replace(" ",'');
+        var data_pos = content.indexOf(',');
+        var data_num = "";
+        data_pos++;   
+      while(( content[ data_pos ] <='9' && content[ data_pos ] >='0' ) || 
+          ( content[ data_pos ] <='F' && content[ data_pos ] >='A' ))
+      {   
+        data_num += content[ data_pos ];
+        data_pos++;
+      }
+      return data_num;
+    }
+    function A_Get_JRNum(content)    // A命令下获得JR offset的值  12FC
+    {      
+           content = content.replace(/ /g,'');
+           content = content.replace(/JR/,'');
+           return content;
+    }
+    function A_Get_InNum(content)
+    {
+            content = content.replace(/ /g,'');
+            content = content.replace(/IN/,'');
+            return content;
+    }
+    function A_Get_OutNum(content)
+    {
+            content = content.replace(/ /g,'');
+            content = content.replace(/OUT/,'');
+            return content;
+    }
+    function A_command_one(content)    // A命令下传入一位参数 寄存器R0-R15
+    {
+             var r1_pos = content.indexOf('R');
+             var r1_num = "";
+             r1_pos++;   
+         while( content[ r1_pos ] <='9' && content[ r1_pos ] >='0' )
+         {   
+              r1_num += content[ r1_pos ];
+              r1_pos++;
+         }
+         return parseInt(r1_num).toString(16);
+    }
+    function A_command_two(content)   //  A命令下传入两位参数的.
+    {     
+            var r1_pos = content.indexOf('R');
+        var r2_pos = content.lastIndexOf('R');
+        var r1_num = "";
+        var r2_num = "";
+        r1_pos++;   
+        while( content[ r1_pos ] <='9' && content[ r1_pos ] >='0' )
+        {   
+              r1_num += content[ r1_pos ];
+              r1_pos++;
+            
+        }
+        r2_pos++;
+          while( content[ r2_pos ] <='9' && content[ r2_pos ] >='0' )
+        {
+              r2_num += content[ r2_pos ];
+              r2_pos++;
+        }
+          return parseInt(r1_num).toString(16) + parseInt(r2_num).toString(16);
+    }
+
+     function new_line_num(){
+
+       newLine( add_zore( PC.toString(16).length ) + PC.toString(16) + " : " );
+
+     }
+
+     function add_zore(len){
+      var num;                                  // 补足位 如1 --> 0001 num则为3
+      var add="";
+      if( ( num = 4 - len ) > 0)
+      {
+        for(var i =0 ;i<num ;i++)
+        {
+           add +="0";
+        }
+      }
+      return add;
+     }
+             
+    function newLine(content){                          // 传入内容
+      var console_div = document.getElementById("console");
+      var old_p = document.getElementById("now");       
+      var new_p = document.createElement("p");
+      var max   = console_div.offsetHeight;             // 显示区域的高度
+      var p     = console_div.getElementsByTagName('p');
+      var now_height = p.length * 22;                   // 每行22px
+
+      old_p.setAttribute("id","");
+      new_p.setAttribute("id","now");
+
+      new_p.innerHTML = content;
+      console_div.appendChild(new_p);
+        
+      if( now_height > max )
+      {
+          console_div.scrollTop = console_div.scrollHeight;
+      }
+    }
+
+    
+   function error()
+   {
+    newLine('         \b         ^error! ');
+   }
+  </script>
 </html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+
+	<script type="text/javascript" src = "js/A_To_E.js"></script>
+	<script type="text/javascript" src = "js/E_To_A.js"></script>
+	<script type="text/javascript" src = "js/Read.js"></script>
+	<script type="text/javascript">
+	  
+	  window.onload = function(){
+          // Firefox,Opera
+      //  document.onkeypress=banBackSpace; 
+        //禁止后退键 作用于IE、Chrome 
+        document.onkeydown=banBackSpace; 
+
+         
+        var p = document.getElementById('click');
+
+        var a = [];
+        console.log( a['3'] );
+        
+     }
+
+     function banBackSpace(){
+     	if(event.keyCode==8)
+     	{
+       //	 event.returnValue=false;
+            return false
+     	}
+      
+     }
+
+
+
+//	</script>
+	<style type="text/css">
+	   p { background: red; min-height: 18px;}
+
+       
+	</style>
+
+
+	
+	 
+	</head>
+<body>
+    <p id="click">click!!</p>
+	<div id="c"> 
+	<p>12321</p>
+	</div>
+</body>
+</html>
