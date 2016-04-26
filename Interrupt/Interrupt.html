@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Interrupt</title>
+	<style type="text/css">
+	   * { margin: 0; padding: 0;}
+	   html { width: 100%; height: 100%; }
+	   body { width: 100%; height: 100%; font-family: 微软雅黑; font-size: 14px;}
+	   p { color: white; font-family: 微软雅黑; line-height: 22px; font-size: 14px; margin-left: 4px;} 
+      
+	    #console { width: 80%; height: 80%; background: #000000; margin: 0 auto;}
+	    #control_div { width: 80%; height: 14%; margin: 0 auto; 
+	    	       background: rgb(214,217,223); }
+	     #button_area { width: 34%; height: 100%; float: left; background: red;}
+
+	     #register { width:63%; height: 100%; float: left; background: blue}
+
+	      #register dd { background: yellow;margin-left: 4px; margin-top: 4px; float: left;} 
+	      #register dd > span { width: 40px; height: 26px; margin-left: 4px;  background:rgb(255,255,255); }
+	</style>
+	<script type="text/javascript">
+	  window.onload = function(){
+	  	var console_div = document.getElementById('console');
+	  	 // 当前正在编辑行
+	  	var keycode; // 按键码
+	  	var realkey; // 字符
+       
+        document.addEventListener("keydown",keyDown);
+
+
+
+        
+	  	function keyDown(e) {
+	  		  var edit_p = document.getElementById('now');
+	  	       // Hack
+	  	      if (navigator.appName == "Microsoft Internet Explorer")//IE
+	  	      {
+	  	           keycode = event.keyCode;
+	  	           realkey = String.fromCharCode(event.keyCode);
+	  	      }else {                                                // Firefox,Opera
+	  	           keycode = e.which;
+	  	           realkey = String.fromCharCode(e.which);
+	  	      }
+	  	      console.log(keycode);
+	  	      // 1字母 2数字 3空格 4逗号  以及回车,退格 其余忽略 
+                                                   // ASCII
+              if(  (keycode > 47 && keycode <58 )  // 0:48 9:57
+                 ||(keycode > 64 && keycode < 91)  // A:65 Z:90
+                 || keycode == 32   )              // 空格:32
+              {
+              	edit_p.innerHTML += realkey;
+              }
+              else if( keycode == 188)// 逗号:188
+              {
+                edit_p.innerHTML += ',';
+              }
+              else if( keycode == 8) // 退格
+              {
+              	if( edit_p.innerHTML.length > 1 ) // 需要剩余 >
+              	{
+                   edit_p.innerHTML = edit_p.innerHTML.slice(0,-1); 
+              	}
+              }
+              else if( keycode == 13) //回车
+              {
+                 newLine(edit_p);
+              }
+
+	  	  }
+
+	  	  // 换行
+	  	  function newLine(old_p){
+	  	  	var new_p = document.createElement("p");
+	  	  	var max   = console_div.offsetHeight;
+	  	  	var p     = console_div.getElementsByTagName('p');
+	  	  	var now_height = p.length * 22;
+
+	  	  	old_p.setAttribute("id","");
+	  	  	new_p.setAttribute("id","now");
+
+	  	  	new_p.innerHTML = ">";
+	  	  	console_div.appendChild(new_p);
+            
+	  	  	if( now_height > max )
+	  	  	{
+               console_div.removeChild( p[0] );
+	  	  	}
+	  	  }
+	  	 
+	  }
+	</script>
+</head>
+<body>
+	<div id="console">
+		<p>TEC-XP Simulation Program</p>
+		<p>Version 2.0 2016.3.28</p>
+		<p>Computer Architectur DUT</p>
+        <p id="now">></p>
+	</div>
+	<div id="control_div">
+		 <div id="button_area">
+		 	<div id="Reset">Reset</div>
+		 	<div id="Start">Start</div>
+		 	<div id="Test">Test</div>
+		 	<div id="btn2">Button2</div>
+		 	<div id="btn1">Button1</div>
+		 	<div id="btn0">Button0</div>
+		 </div>
+		 <div id="register">
+		 	 <dl>
+		 	 	<dd>R0<span>0000</span></dd>
+		 	 	<dd>R0<span>0000</span></dd>
+		 	 	<dd>R0<span>0000</span></dd>
+		 	 	<dd>R0<span>0000</span></dd>
+		 	 	<dd>R0<span>0000</span></dd>
+		 	 	<dd>R0<span>0000</span></dd>
+		 	 	<dd>R0<span>0000</span></dd>
+		 	 	<dd>R0<span>0000</span></dd>
+		 	 </dl>
+		 </div>
+	</div>
+</body>
+</html>
