@@ -1,58 +1,233 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-	<meta charset="UTF-8">
-	<title>Interrupt</title>
-	<style type="text/css">
-	   * { margin: 0; padding: 0;}
-	   html { width: 100%; height: 100%; }
-	   body { width: 100%; height: 100%; font-family: 微软雅黑; font-size: 14px;}
-	   p { color: white; font-family: 微软雅黑; line-height: 22px; min-height: 22px; font-size: 14px; margin-left: .8px; } 
-	    #console { width: 80%; height: 80%; background: #000000; margin: 0 auto; overflow-x: hidden;}
-	    #control_div { width: 80%; height: 14%; margin: 0 auto; 
-	    	       background: rgb(214,217,223); }
-	     #button_area { width: 34%; height: 100%; float: left; background: red;}
-	     #register { width:63%; height: 100%; float: left; background: blue}
-	      #register dd { background: yellow;margin-left: 4px; margin-top: 4px; float: left;} 
-	      #register dd > span { width: 40px; height: 26px; margin-left: 4px;  background:rgb(255,255,255); }
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Language" content="zh-cn">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="initial-scale=1, width=device-width">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+<link rel="stylesheet" type="text/css" href="css/normalize.css" />
+  <link rel="stylesheet" type="text/css" href="css/demo.css" />
+  <link rel="stylesheet" type="text/css" href="css/component.css" />
+  <link rel="stylesheet" type="text/css" href="css/content.css" />
+
+  <link rel="stylesheet" href="./111/web-main.css">
+  <link rel="stylesheet" href="./111/bootstrap.min.css">
+  <script src="js/modernizr.custom.js"></script>
+  <script type="text/javascript">
+    function showx(){
+      document.getElementById("xiala").style.display="block";
+    }
+    function hidex(){
+      document.getElementById("xiala").style.display="none";
+    }
+  </script>
+<title>Interrupt</title>
+<style type="text/css">
+     * { margin: 0; padding: 0;}
+     html { width: 100%; height: 100%; }
+     body { width: 100%; height: 100%; font-family: 微软雅黑; font-size: 14px;}
+     p { color: white; font-family: 微软雅黑; line-height: 22px; min-height: 22px; font-size: 14px; margin-left: .8px; } 
+      #console { width: 80%; height: 400px; background: #000000; margin:0 auto; overflow-x: hidden;}
+      #control_div { width: 80%; height: 14%; margin: 0 auto; 
+               background: rgb(214,217,223); }
+       #button_area { width: 34%; height: 100%; float: left; background: red;}
+       #register { width:63%; height: 100%; float: left; background: blue}
+        #register dd { background: yellow;margin-left: 4px; margin-top: 4px; float: left;} 
+        #register dd > span { width: 40px; height: 26px; margin-left: 4px;  background:rgb(255,255,255); }
         .rel { position: relative;}
         .abs { position: absolute;}
-	</style>
+  </style>
 </head>
-<body>
-	<div id="console">
-		<p>TEC-XP Simulation Program</p>
-		<p>Version 2.0 2016.3.28</p>
-		<p>Computer Architectur DUT</p>
-        <p id="now">> </p>
-	</div>
-<!-- 	<div id="control_div">
-		 <div id="button_area">
-		 	<div id="Reset">Reset</div>
-		 	<div id="Start">Start</div>
-		 	<div id="Test">Test</div>
-		 	<div id="btn2">Button2</div>
-		 	<div id="btn1">Button1</div>
-		 	<div id="btn0">Button0</div>
-		 </div>
-		 <div id="register">
-		 	 <dl>
-		 	 	<dd>R0<span>0000</span></dd>
-		 	 	<dd>R0<span>0000</span></dd>
-		 	 	<dd>R0<span>0000</span></dd>
-		 	 	<dd>R0<span>0000</span></dd>
-		 	 	<dd>R0<span>0000</span></dd>
-		 	 	<dd>R0<span>0000</span></dd>
-		 	 	<dd>R0<span>0000</span></dd>
-		 	 	<dd>R0<span>0000</span></dd>
-		 	 </dl>
-		 </div>
- -->
 
-		  
-	</div>
+<body onload="hidex()">
+  <div id="main-container">
+    <div id="main-header">
+      <div class="header homepage-wrap">
+        <div class="homepage-hero">
+          <nav class="navbar navbar-default">
+            <div class="container">
+              <!-- Brand and toggle get grouped for better mobile display-->
+              <div class="navbar-header">
+                <button type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" class="navbar-toggle collapsed">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a href="https://www.FandeShip/" class="navbar-brand">
+                  <img src="./111/fandeship.png" alt="logomark" height="27" width="27">
+                  <div class="zh-logotype">FandeShip</div>
+                </a>
+              </div>
+              <!-- Collect the nav links, forms, and other content for toggling-->
+              <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                  <li>
+                    <a href="index.html">主页</a>
+                  </li>
+                  <li>
+                    <a href="#">平台介绍</a>
+                  </li>
+                  <li  onmouseover="showx()" onmouseout="hidex()">
+                    <a href="#">
+                      <span>汇编平台</span></a>
+                    <div id="xiala">
+                      <dl class="li_3_content">
+                                  <dt></dt>
+                                  <dd><a href="tuoji.html" style="padding-left:10px;color:#727480!important;font-weight:200">脱机实验</a></dd>
+                                  <dd><a href="interrupt.html" style="padding-left:10px;color:#727480!important;font-weight:200">中断实验</a></dd>
+                              </dl>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="morph-button morph-button-modal morph-button-modal-2 morph-button-fixed">
+                      <button type="button" style="border:none;margin-left:0px;padding-left:0px;margin-top:7px;background-color:white">Login</button>
+                      <div class="morph-content">
+                      <div>
+                        <div class="content-style-form content-style-form-1">
+                          <span class="icon icon-close">Close the dialog</span>
+                          <h2>Login</h2>
+                          <form>
+                            <p><label>Email</label><input type="text" /></p>
+                            <p><label>Password</label><input type="password" /></p>
+                            <p><button>Login</button></p>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="morph-button morph-button-modal morph-button-modal-3 morph-button-fixed">
+                      <button type="button" style="border:none;margin-left:0px;padding-left:0px;margin-top:7px;background-color:white">Sign up</button>
+                      <div class="morph-content">
+                      <div>
+                        <div class="content-style-form content-style-form-2">
+                          <span class="icon icon-close">Close the dialog</span>
+                          <h2>Sign Up</h2>
+                          <form>
+                            <p><label>Email</label><input type="text" /></p>
+                            <p><label>Password</label><input type="password" /></p>
+                            <p><label>Repeat Password</label><input type="password" /></p>
+                            <p><button>Sign Up</button></p>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <script src="js/classie.js"></script>
+    <script src="js/uiMorphingButton_fixed.js"></script>
+    <script>
+      (function() {
+        var docElem = window.document.documentElement, didScroll, scrollPosition;
 
+        // trick to prevent scrolling when opening/closing button
+        function noScrollFn() {
+          window.scrollTo( scrollPosition ? scrollPosition.x : 0, scrollPosition ? scrollPosition.y : 0 );
+        }
+
+        function noScroll() {
+          window.removeEventListener( 'scroll', scrollHandler );
+          window.addEventListener( 'scroll', noScrollFn );
+        }
+
+        function scrollFn() {
+          window.addEventListener( 'scroll', scrollHandler );
+        }
+
+        function canScroll() {
+          window.removeEventListener( 'scroll', noScrollFn );
+          scrollFn();
+        }
+
+        function scrollHandler() {
+          if( !didScroll ) {
+            didScroll = true;
+            setTimeout( function() { scrollPage(); }, 60 );
+          }
+        };
+
+        function scrollPage() {
+          scrollPosition = { x : window.pageXOffset || docElem.scrollLeft, y : window.pageYOffset || docElem.scrollTop };
+          didScroll = false;
+        };
+
+        scrollFn();
+
+        [].slice.call( document.querySelectorAll( '.morph-button' ) ).forEach( function( bttn ) {
+          new UIMorphingButton( bttn, {
+            closeEl : '.icon-close',
+            onBeforeOpen : function() {
+              // don't allow to scroll
+              noScroll();
+            },
+            onAfterOpen : function() {
+              // can scroll again
+              canScroll();
+            },
+            onBeforeClose : function() {
+              // don't allow to scroll
+              noScroll();
+            },
+            onAfterClose : function() {
+              // can scroll again
+              canScroll();
+            }
+          } );
+        } );
+
+        // for demo purposes only
+        [].slice.call( document.querySelectorAll( 'form button' ) ).forEach( function( bttn ) { 
+          bttn.addEventListener( 'click', function( ev ) { ev.preventDefault(); } );
+        } );
+      })();
+    </script>
+                  </li>
+                  
+                </ul>
+              </div>
+            </div>
+          </nav>
+          <nav data-nav-status="toggle" class="navigation-bar navbar-default is-hidden" style="display: block;"><div class="container"><a href="https://www.FandeShip/" class="navbar-brand"><img src="./111/fandeship.png" alt="logomark" height="24" width="24"><div class="zh-logotype">FandeShip汇编平台</div></a>
+</div></nav>
+
+<div id="console">
+    <p>TEC-XP Simulation Program</p>
+    <p>Version 2.0 2016.3.28</p>
+    <p>Computer Architectur DUT</p>
+    <p id="now">> </p>
+  </div>
+<!--  <div id="control_div">
+     <div id="button_area">
+      <div id="Reset">Reset</div>
+      <div id="Start">Start</div>
+      <div id="Test">Test</div>
+      <div id="btn2">Button2</div>
+      <div id="btn1">Button1</div>
+      <div id="btn0">Button0</div>
+     </div>
+     <div id="register">
+       <dl>
+        <dd>R0<span>0000</span></dd>
+        <dd>R0<span>0000</span></dd>
+        <dd>R0<span>0000</span></dd>
+        <dd>R0<span>0000</span></dd>
+        <dd>R0<span>0000</span></dd>
+        <dd>R0<span>0000</span></dd>
+        <dd>R0<span>0000</span></dd>
+        <dd>R0<span>0000</span></dd>
+       </dl>
+     </div>  
+  </div> -->
+
+
+
+<script src="./111/jquery-2.1.3.min.js"></script>
+<script src="./111/bootstrap.min.js"></script>
+<script src="./111/main.js"></script>
 </body>
+
 
     <script type="text/javascript" src="js/A_To_E.js"></script>
     <script type="text/javascript" src="js/E_To_A.js"></script>
@@ -213,7 +388,7 @@
                           }
                           else
                           {
-                            error();5
+                            error();
                             newLine("> ");
                           }
 
@@ -397,4 +572,5 @@
     newLine('         \b         ^error! ');
    }
   </script>
+
 </html>

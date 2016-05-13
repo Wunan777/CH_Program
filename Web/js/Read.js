@@ -18,7 +18,8 @@ function Read()
       else
       { 
          // E指令 
-             
+         memory[z]
+ 
         // 本行要输出内容 show_content 为转换为A指令后的
          show_content = [];
          order  = memory[z][0]+memory[z][1];
@@ -42,10 +43,8 @@ function Read()
    }
 
     newLine('> ');
-
+-
 }
-
-
 
 function read_line(arr,num)  // arr由 1到3项组成
 {  
