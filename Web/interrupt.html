@@ -18,10 +18,10 @@
   <script src="js/modernizr.custom.js"></script>
   <script type="text/javascript">
     function showx(){
-      document.getElementById("xiala").style.display="block";
+      document.getElementById("xiala").style.visibility="visible";
     }
     function hidex(){
-      document.getElementById("xiala").style.display="none";
+      document.getElementById("xiala").style.visibility="hidden";
     }
   </script>
 <title>Interrupt</title>
@@ -30,7 +30,7 @@
      html { width: 100%; height: 100%; }
      body { width: 100%; height: 100%; font-family: 微软雅黑; font-size: 14px;}
      p { color: white; font-family: 微软雅黑; line-height: 22px; min-height: 22px; font-size: 14px; margin-left: .8px; } 
-      #console { width: 80%; height: 400px; background: #000000; margin:0 auto; overflow-x: hidden;}
+      #console { width: 100%; background: #000000; margin-top:20px; height:400px;margin:0 0 0 0; overflow-x: hidden;}
       #control_div { width: 80%; height: 14%; margin: 0 auto; 
                background: rgb(214,217,223); }
        #button_area { width: 34%; height: 100%; float: left; background: red;}
@@ -39,6 +39,12 @@
         #register dd > span { width: 40px; height: 26px; margin-left: 4px;  background:rgb(255,255,255); }
         .rel { position: relative;}
         .abs { position: absolute;}
+
+        .col-xs-offset-1 {
+          margin-left: 8.33333333%;}
+        .col-xs-10 {
+          width: 60%;}
+
   </style>
 </head>
 
@@ -192,12 +198,24 @@
           <nav data-nav-status="toggle" class="navigation-bar navbar-default is-hidden" style="display: block;"><div class="container"><a href="https://www.FandeShip/" class="navbar-brand"><img src="./111/fandeship.png" alt="logomark" height="24" width="24"><div class="zh-logotype">FandeShip汇编平台</div></a>
 </div></nav>
 
-<div id="console">
-    <p>TEC-XP Simulation Program</p>
+<div>
+    <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3"><div class="hero-video-container">
+      <img src="./111/Group.png" alt="zh" class="browser-bar">
+      <div id="carousel-example-generic" data-ride="carousel" class="carousel slide">
+        <div role="listbox" class="carousel-inner">
+          <div class="item active" >
+            <div id="console">
+    <p style="margin-top:10px">TEC-XP Simulation Program</p>
     <p>Version 2.0 2016.3.28</p>
     <p>Computer Architectur DUT</p>
     <p id="now">> </p>
   </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
 <!--  <div id="control_div">
      <div id="button_area">
       <div id="Reset">Reset</div>

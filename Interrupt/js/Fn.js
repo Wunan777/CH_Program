@@ -1,12 +1,14 @@
  //////////////// 与硬件接口
-         
   function Get_R(r_num)
   { 
     return R_Arr["R"+r_num];
   }
   function Set_R(r_num,num)
-  {
-    R_Arr["R"+r_num] = num.toUpperCase();
+  { 
+    if( R_Arr["R"+r_num] != undefined )
+    {
+      R_Arr["R"+r_num] = num.toUpperCase();
+    }
   }
   function Get_Port(port_num)
   {
@@ -354,12 +356,22 @@
              // PORT 81最高位变一
              var port_num = arr[0]; //80
              var p = document.getElementById('now');
+
+              console.log( " 这里！ "+":"+R_Arr['0'] +" 是否有值");
              Set_Port( port_num , Get_R("0") );
              ///////// 模拟外设输出
-               //console.log( "R0" + Get_R('0') + " PORT_80 " + Get_Port(arr[0]) );
+             //console.log( "R0" + Get_R('0') + " PORT_80 " + Get_Port(arr[0]) );
              console.log( "输出 : " + String.fromCharCode( parseInt(Get_Port(port_num),16)) ); 
             
-             p.innerHTML += String.fromCharCode( parseInt(Get_Port(port_num),16));
+            // if( Get_Port(port_num)[0] == "@" ) // 表示ascii 需要转换
+            // {
+                p.innerHTML += String.fromCharCode( parseInt(Get_Port(port_num),16) );
+             // }
+             // else
+             // {
+             //    p.innerHTML += parseInt( Get_Port(port_num ),16);
+             // }             
+             
              /////////
              var t = Complete_Binary( Hex_To_Binary( Get_Port("81") ) );
              // t 0100 0000 0000 0000
@@ -388,7 +400,9 @@
          function CALA(arr)
          { //arr[0] 地址
            SP.push( "#" + cursor);
-           cursor = arr[0];
+           cursor = parseInt( arr[0], 16);
+           console.log( cursor );
+           console.log( memory[cursor] );
          }
          function EI()
          {

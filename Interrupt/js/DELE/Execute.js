@@ -14,7 +14,7 @@ function execute()
        return ;
      }
      else
-     {  
+     {
        str = memory[cursor];
      }
 
