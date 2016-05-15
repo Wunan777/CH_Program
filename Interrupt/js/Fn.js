@@ -297,37 +297,37 @@
             str = Binary_To_Hex(str);
             Set_R(arr[0],str);
          }
-         function JR(arr)
+         function JR(arr)/// 写到excute 原子性的
          {
-            cursor = Str_Hex_To_Num(arr[0]);
+            //cursor = Str_Hex_To_Num(arr[0]);
          }
          function JRC(arr)
          {
-            if ( C == '1') 
-            {
-              cursor = Str_Hex_To_Num(arr[0]);
-            }
+            // if ( C == '1') 
+            // {
+            //   cursor = Str_Hex_To_Num(arr[0]);
+            // }
          }
          function JRNC(arr)
          {   
-            if( C == '0')
-            {
-              cursor = Str_Hex_To_Num(arr[0]);
-            }
+            // if( C == '0')
+            // {
+            //   cursor = Str_Hex_To_Num(arr[0]);
+            // }
          }
          function JRZ(arr)
          {
-            if( Z == '1')
-            {
-               cursor = Str_Hex_To_Num(arr[0]);
-            }
+            // if( Z == '1')
+            // {
+            //    cursor = Str_Hex_To_Num(arr[0]);
+            // }
          }
          function JRNZ(arr)
          {
-           if ( Z =='0') 
-           {
-              cursor = Str_Hex_To_Num(arr[0]);
-           }
+           // if ( Z =='0') 
+           // {
+           //    cursor = Str_Hex_To_Num(arr[0]);
+           // }
          }
          function JMPA(arr)
          {
@@ -357,21 +357,12 @@
              var port_num = arr[0]; //80
              var p = document.getElementById('now');
 
-              console.log( " 这里！ "+":"+R_Arr['0'] +" 是否有值");
              Set_Port( port_num , Get_R("0") );
              ///////// 模拟外设输出
              //console.log( "R0" + Get_R('0') + " PORT_80 " + Get_Port(arr[0]) );
              console.log( "输出 : " + String.fromCharCode( parseInt(Get_Port(port_num),16)) ); 
             
-            // if( Get_Port(port_num)[0] == "@" ) // 表示ascii 需要转换
-            // {
-                p.innerHTML += String.fromCharCode( parseInt(Get_Port(port_num),16) );
-             // }
-             // else
-             // {
-             //    p.innerHTML += parseInt( Get_Port(port_num ),16);
-             // }             
-             
+             p.innerHTML += String.fromCharCode( parseInt(Get_Port(port_num),16) );
              /////////
              var t = Complete_Binary( Hex_To_Binary( Get_Port("81") ) );
              // t 0100 0000 0000 0000
@@ -388,6 +379,11 @@
                   cursor = -1;
                   return ; 
              }
+             else if( add[0] == "$") // 中断返回标志 $0#8190
+             { 
+                Level =  parseInt( add.slice(1,2) );
+                cursor = parseInt( add.slice( add.indexOf("#")+1 ) );
+             }
              else if( add[0] == "#" )
              {
                  cursor = parseInt( add.slice(1) );
@@ -400,6 +396,7 @@
          function CALA(arr)
          { //arr[0] 地址
            SP.push( "#" + cursor);
+           alert("CALA"+cursor);
            cursor = parseInt( arr[0], 16);
            console.log( cursor );
            console.log( memory[cursor] );

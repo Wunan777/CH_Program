@@ -34,6 +34,9 @@ function ReSet()
     C = "0";   // 针对每一位的操作,当有进位时为1,没有进位的时候为0;
     Z = "0";   // 一次计算当计算结果为0时,为1,否则为0;
 }
+
+
+
 function execute()
 {  
        /// E_To_Fn()
@@ -58,7 +61,9 @@ function execute()
      var fn;
      var parameter_arr = [];
     console.log("当前行数:"+ cursor.toString(16) );
-    //2 当前行可以解析
+
+    //2 当前行可以解析/////////////////
+    ////////////////////////////////// MVRD CALA是连读并不会立即执行
      if( arr_fn == null)
      { 
        console.log("命令有错误,不继续执行！");
@@ -93,15 +98,57 @@ function execute()
             return ;
          }
      }
-     
-      fn = arr_fn[0];
-      parameter_arr = arr_fn[1];
-      setTimeout(fn,100,parameter_arr);
-     
-//    console.log("当前行:"+cursor);
-      cursor++;
-      setTimeout(execute,100);
 
+     ///////////////////////////// 当JR等跳转 原子性 立即执行;
+    // JR等跳转函数不放入等待队列 //BTN1 改变cursor 避免互相影响
+    
+     if(arr_fn[0] == JR)
+     {
+       cursor = parseInt(arr_fn[1][0],16);
+       ///下一条
+       setTimeout(execute,100);
+     }
+     else if(arr_fn[0] == JRC)
+     {
+       if ( C == '1') 
+       {
+         cursor = parseInt(arr_fn[1][0],16);
+         setTimeout(execute,100);
+       }
+     }
+     else if( arr_fn[0] == JRNC)
+     {
+       if( C == '0')
+       {
+         cursor = parseInt(arr_fn[1][0],16);
+         setTimeout(execute,100);
+       }
+     }
+     else if( arr_fn[0] == JRZ)
+     {
+       if( Z == '1')
+       {
+          cursor = parseInt(arr_fn[1][0],16);
+          setTimeout(execute,100);
+       }
+     }
+     else if( arr_fn[0] == JRNZ)
+     {
+       if ( Z =='0') 
+       {
+          cursor = parseInt(arr_fn[1][0],16);
+          setTimeout(execute,100);
+       }
+     }
+     else
+     {
+        fn = arr_fn[0];
+        parameter_arr = arr_fn[1];
+        setTimeout(fn,100,parameter_arr);
+        cursor++;
+        setTimeout(execute,100);
+     }
+     
    
 }
 

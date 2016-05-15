@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>手风琴</title>
+<link rel="stylesheet" href="css/cbl.css" type="text/css">
+<script src="js/jquery-1.9.1.js"></script>
+<script src="js/jquery.collapse.js"></script>
+</head>
+
+<body>
+<div class="col c2">
+  <!-- BEGIN Custom open and close -->
+  <h2>Guidance</h2>
+  <div id="custom-show-hide-example">
+    <h3>简单语句</h3>
+    <div>
+      <p>1.1赋值MVRD</p>
+      <p>1.2输出OUT</p>
+      <p>1.3加减乘除运算</p>
+      <p>1.4位运算XOR</p>
+      <p>1.5跳转JR</p>
+      <p>1.6输入IN</p>
+    </div>
+    <h3>I/O双屏输入输出</h3>
+    <div>
+      <p>2.1输入输出详细讲解(缓冲区介绍)</p>
+      <p>2.2屏幕1及屏幕2的双向输出</p>
+    </div>
+    <h3>中断实验</h3>
+    <div>
+      <p>3.1原理介绍、汇编指令EI、CALA及相应的中断按钮</p>
+      <p>3.2子程序，3个预编译指定地址处的程序</p>
+      <p>3.3主程序</p>
+      <p>3.4计算机中的实例举例</p>
+    </div>
+    <h3>硬件</h3>
+    <div>扩展的介绍(寄存器，缓冲区，算数逻辑运算单元)</div>
+  </div>
+  <script>
+        new jQueryCollapse($("#custom-show-hide-example"), {
+          open: function() {
+            this.slideDown(150);
+          },
+          close: function() {
+            this.slideUp(150);
+          }
+        });
+      </script>
+  <!-- END Custom open and close -->
+</div>
+</body>
+</html>
