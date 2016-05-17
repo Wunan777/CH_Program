@@ -64,22 +64,22 @@
 
 		 <div id="register">
 		 	 <dl>
-		 	 	<dd><p>R0<span>0000</span></p></dd>
-		 	 	<dd><p>R1<span>0000</span></p></dd>
-		 	 	<dd><p>R2<span>0000</span></p></dd>
-		 	 	<dd><p>R3<span>0000</span></p></dd>
-		 	 	<dd><p>SP<span>0000</span></p></dd>
-		 	 	<dd><p>PC<span>0000</span></p></dd>
-		 	 	<dd><p>R6<span>0000</span></p></dd>
-		 	 	<dd><p>R7<span>0000</span></p></dd>
-        <dd><p>R8<span>0000</span></p></dd>
-        <dd><p>R9<span>0000</span></p></dd>
-        <dd><p>R10<span>0000</span></p></dd>
-        <dd><p>R11<span>0000</span></p></dd>
-        <dd><p>R12<span>0000</span></p></dd>
-        <dd><p>R13<span>0000</span></p></dd>
-        <dd><p>R14<span>0000</span></p></dd>
-        <dd><p>R15<span>0000</span></p></dd>
+		 	 	<dd><p>R0<span id="R0">0000</span></p></dd>
+		 	 	<dd><p>R1<span id="R1">0000</span></p></dd>
+		 	 	<dd><p>R2<span id="R2">0000</span></p></dd>
+		 	 	<dd><p>R3<span id="R3">0000</span></p></dd>
+		 	 	<dd><p>SP<span id="SP">0000</span></p></dd>
+		 	 	<dd><p>PC<span id="PC">0000</span></p></dd>
+		 	 	<dd><p>R6<span id="R6">0000</span></p></dd>
+		 	 	<dd><p>R7<span id="R7">0000</span></p></dd>
+        <dd><p>R8<span id="R8">0000</span></p></dd>
+        <dd><p>R9<span id="R9">0000</span></p></dd>
+        <dd><p>R10<span id="R10">0000</span></p></dd>
+        <dd><p>R11<span id="R11">0000</span></p></dd>
+        <dd><p>R12<span id="R12">0000</span></p></dd>
+        <dd><p>R13<span id="R13">0000</span></p></dd>
+        <dd><p>R14<span id="R14">0000</span></p></dd>
+        <dd><p>R15<span id="R15">0000</span></p></dd>
 		 	 </dl>
 		 </div>
 
@@ -263,13 +263,15 @@
             }
       }
     }
+
+
     function Jump1()
     { 
       Level_Change = 1;
       if( status == 3 && FLAG == 1 && Level_Change > Level)
       { // 中断跳转
         alert( "跳转前"+cursor.toString(16) );
-        SP.push( "$" + Level + "#" + cursor);
+        Stack_Push( "$" + Level + "#" + cursor);
         cursor = parseInt("2404",16);
         alert( cursor.toString(16) );
         Level = Level_Change;
@@ -281,7 +283,7 @@
       if( status ==3 && FLAG == 1 && Level_Change > Level)
       {
         alert( "跳转前"+cursor.toString(16) );
-        SP.push("$" + Level + "#" + cursor);
+        Stack_Push("$" + Level + "#" + cursor);
         cursor = parseInt("2408",16);
         alert( cursor.toString(16) );
         Level = Level_Change;
@@ -293,7 +295,7 @@
       if( status == 3 && FLAG == 1 && Level_Change > Level)
       {
          alert( "跳转前"+cursor.toString(16) );
-         SP.push("$" + Level + "#" + cursor);
+         Stack_Push("$" + Level + "#" + cursor);
          cursor = parseInt("240C",16);
          alert( cursor.toString(16) );
          Level = Level_Change;

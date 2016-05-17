@@ -30,7 +30,6 @@ function Parse_Init_Order(content)
 	        }
 	        else if( content[0] == 'U') // 显示出保存内容
 	        {   
-	             PC = parseInt( content.replace("U","").replace(" ","") , 16);
 	             status = 4;
 	             U_Show();
 	             status = 0;
@@ -51,7 +50,7 @@ function command_legal(str)
       return true;                                   
   }
   // 合法 E 2000  A 2000 U 2000或者空
-  if( (/^(E|A|U|G)\s+([0-9A-F]{1,4})$/).exec(str)!=null )
+  if( (/^\s*(E|A|U|G)\s+([0-9A-F]{1,4})$/).exec(str)!=null )
   {
     return true
   }

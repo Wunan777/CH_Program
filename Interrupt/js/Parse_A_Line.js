@@ -93,11 +93,11 @@ function A_To_E(content)
              { 
                 /////无操作
              }
-             else if(/\s*MVRD\s+R(1(0|1|2|3|4|5)|0?\d{1}|0)\s*,\s*[0-9A-F]{1,4}\s*/.exec(content)!= null)  /// 特殊的两个
-             {   
+             else if(/\s*MVRD\s+R(1(0|1|2|3|4|5)|0?\d{1}|0)\s*,\s*[0-9A-F]{1,4}\s*$/.exec(content)!= null)  /// 特殊的两个
+             {   //MVRD R15,123
                  content = content.replace(order,'');
-                 res += A_Get_R(content,1);                                                            // R后面的数字12
-                 res += content.replace( ('R'+A_Get_R(content,1)),"").replace(" ","").replace(",",""); // ,后面  e值
+                 res += A_Get_R(content,1);          
+                 res += content.replace( ('R'+ parseInt( A_Get_R(content,1) ,16 ) ),"").replace(" ","").replace(",",""); // ,后面  e值
              }
              else if(/^\s*CALA\s+[0-9A-F]{1,4}\s*$/.exec(content)!=null)
              {   

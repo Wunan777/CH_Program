@@ -6,6 +6,8 @@ function G_Run()
 }
 function Finish()
 {  
+   var PC = document.getElementById('PC');
+   PC.innerHTML = cursor.toString(16)-1;
    status = 0;
    ReSet();
    newLine("> ");
@@ -264,7 +266,7 @@ function E_To_Fn(content)
        else if( Each_Date[2]  ==  'R_1' )             // MVRD R0也在此处判断 880
        {   
          if( /^[0-9A-F]{1,}$/.exec(content)!=null )
-         { 
+         {   //F 存入的15
            parameter_num.push( parseInt( content[0],16).toString() );
            res.push(parameter_num);
          }

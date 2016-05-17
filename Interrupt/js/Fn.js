@@ -1,14 +1,63 @@
  //////////////// 与硬件接口
+  function Stack_Push(Add)
+  { 
+    // alert(Add); //push(R0) 0-9A-F{1,4} CALA 10进制  中断 $0#0-9A-F{1,4}
+    SP.push(Add);
+    var sp = document.getElementById("SP");
+
+    if(Add[0] == "#")
+    { 
+      Add = parseInt( Add.slice(1) ).toString(16).toUpperCase();
+    }
+    else if(Add[0] == "$")
+    {
+      Add = parseInt( Add.slice(3) ).toString(16).toUpperCase();
+    }
+
+    sp.innerHTML = Complete_Four( Add );
+  }
+  function Stack_Pop()  // 测试SP
+  {  
+     var str = SP.pop();// 
+     var sp = document.getElementById("SP");
+     var Add = SP[ SP.length - 1 ];// 栈顶
+     if( Add[0] == "#" && Add[1] == "#")  // 到达主函数底部了
+     {
+       Add = "0000";
+     }
+     else if(Add[0] == "#")
+     { 
+       Add = parseInt( Add.slice(1) ).toString(16).toUpperCase();
+     }
+     else if(Add[0] == "$")
+     {
+       Add = parseInt( Add.slice(3) ).toString(16).toUpperCase();
+     }
+
+     sp.innerHTML = Complete_Four( Add );
+     return str;
+  }
   function Get_R(r_num)
   { 
     return R_Arr["R"+r_num];
   }
   function Set_R(r_num,num)
-  { 
+  {  // R后的数字10进制  200F 16进制
+    var R = document.getElementById("R"+r_num);
+   
     if( R_Arr["R"+r_num] != undefined )
     {
       R_Arr["R"+r_num] = num.toUpperCase();
+      R.innerHTML = Complete_Four( num.toUpperCase() );
     }
+
+  }
+  function Complete_Four(str)
+  {
+    for (var i = str.length; i < 4; i++) {
+      str = "0" + str;
+    }
+    return str;
   }
   function Get_Port(port_num)
   {
@@ -68,7 +117,7 @@
     return parseInt(arr,16);
   }
 
-         ////////////////////////////
+         ////////////////////////////   ////////////////////////////   ////////////////////////////   ////////////////////////////
 
          function MVRD(arr)
          {  
@@ -342,11 +391,11 @@
          function PUSH(arr)
          { 
               // R -> SP
-              SP.push( Get_R(arr[0]) );
+             Stack_Push( Get_R(arr[0]) );
          }
          function POP(arr)
          {    // SP -> R
-              Set_R( arr[0] , SP.pop());
+              Set_R( arr[0] , Stack_Pop() );
          }
          function OUT(arr)
          {  
@@ -372,7 +421,7 @@
 
          function RET(arr)
          {
-             var add = SP.pop();
+             var add = Stack_Pop();
              if( add[0] == "#" && add[1] == "#")
              {  // ## 为主函数返回标志
                   console.log("main函数结束！");
@@ -395,8 +444,7 @@
          }
          function CALA(arr)
          { //arr[0] 地址
-           SP.push( "#" + cursor);
-           alert("CALA"+cursor);
+           Stack_Push( "#" + cursor);
            cursor = parseInt( arr[0], 16);
            console.log( cursor );
            console.log( memory[cursor] );
