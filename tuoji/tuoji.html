@@ -10,34 +10,33 @@
 <body>
 	<div id="content">
            <div id="data_div">
-             <span>
+             <div id="Date_Input_Span">
                  输入D<input type="text" id="data" value="" placeholder="请输入16进制数字">
-             </span>
-             <div id="register">
-             	<dl>
-               <div class="col">
-             	  <dd>R0</dd>
-             		<dd>R1</dd>
-             		<dd>R2</dd>
-             		<dd>R3</dd>
-                <dd>R4</dd>
-                <dd>R5</dd>
-                <dd>R6</dd>
-                <dd>R7</dd>
-              </div>
-               <div class="col">
-                <dd>R8</dd>
-                <dd>R9</dd>
-                <dd>R10</dd>
-                <dd>R11</dd>    
-                <dd>R12</dd>
-                <dd>R13</dd>
-                <dd>R14</dd>
-                <dd>R15</dd>
-
-               </div>          	
-             	</dl>
              </div>
+             <div id="register">
+             <dl>
+               <div class="col">
+             	<dd>R0:<span>0000</span></dd>
+	     		<dd>R1:<span>0000</span></dd>
+	     		<dd>R2:<span>0000</span></dd>
+	     		<dd>R3:<span>0000</span></dd>
+                <dd>R4:<span>0000</span></dd>
+                <dd>R5:<span>0000</span></dd>
+                <dd>R6:<span>0000</span></dd>
+                <dd>R7:<span>0000</span></dd>
+               </div>
+               <div class="col">
+                <dd>R8:<span>0000</span></dd>
+                <dd>R9:<span>0000</span></dd>
+                <dd>R10:<span>0000</span></dd>
+                <dd>R11:<span>0000</span></dd>    
+                <dd>R12:<span>0000</span></dd>
+                <dd>R13:<span>0000</span></dd>
+                <dd>R14:<span>0000</span></dd>
+                <dd>R15:<span>0000</span></dd>
+               </div>          	
+           	 </dl>
+           </div>
 
            	
            </div>
@@ -45,7 +44,7 @@
 	      <div id="result_div">
 	      	<div id="CZVS">
 	            <dl>
-	      			<dt class = "d0">CZVS</dt>
+	      			<dt class = "d0">C Z V S</dt>
 	      			<dd class = "light"></dd>
 	      			<dd class = "light"></dd>
 	      			<dd class = "light"></dd>
@@ -54,7 +53,10 @@
 	      	</div>
 
 	      	<div id="ALU">
-	      		ALU<span id="alu_span">0000</span>
+	      		<dl>
+	      			<dt>ALU</dt>
+	      			<span id="alu_span">0000</span>
+	      		</dl>
 	      	</div>
 	      </div>
 
