@@ -11,7 +11,6 @@ function Read()
    // MVRD  88 连读
    // CALA  CE 连读
    
-
    for(var z=PC; ;z++)
    {   
       
@@ -22,7 +21,6 @@ function Read()
       else
       { 
          // E指令 
-             
         // 本行要输出内容 show_content 为转换为A指令后的
          show_content = [];
          order  = memory[z][0]+memory[z][1];

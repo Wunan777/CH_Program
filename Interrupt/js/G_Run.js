@@ -8,6 +8,7 @@ function Finish()
 {  
    var PC = document.getElementById('PC');
    PC.innerHTML = cursor.toString(16)-1;
+   alert( cursor.toString(16)-1 );
    status = 0;
    ReSet();
    newLine("> ");
@@ -50,9 +51,8 @@ function execute()
      //1 首先有当前行
      if( memory[cursor] == undefined)
      { 
-       console.log(cursor.toString(16)+"行为und");
-       Finish();
-       return ;
+       console.log( cursor.toString(16) + "行为und");
+       return ;  //RET函数总finish
      }
      else
      {
@@ -86,7 +86,7 @@ function execute()
            return ;
         }
      }
-     else if(arr_fn[0] == CALA)
+     else if( arr_fn[0] == CALA )
      {
          cursor++;
          if (memory[cursor] != undefined) 
@@ -117,12 +117,22 @@ function execute()
          cursor = parseInt(arr_fn[1][0],16);
          setTimeout(execute,100);
        }
+       else
+       {
+         cursor++;
+         setTimeout(execute,100);
+       }
      }
      else if( arr_fn[0] == JRNC)
-     {
+     {  
        if( C == '0')
        {
          cursor = parseInt(arr_fn[1][0],16);
+         setTimeout(execute,100);
+       }
+       else
+       {  
+         cursor++;
          setTimeout(execute,100);
        }
      }
@@ -133,6 +143,11 @@ function execute()
           cursor = parseInt(arr_fn[1][0],16);
           setTimeout(execute,100);
        }
+       else
+       {  
+         cursor++;
+         setTimeout(execute,100);
+       }
      }
      else if( arr_fn[0] == JRNZ)
      {
@@ -141,12 +156,17 @@ function execute()
           cursor = parseInt(arr_fn[1][0],16);
           setTimeout(execute,100);
        }
+       else
+       {  
+         cursor++;
+         setTimeout(execute,100);
+       }
      }
      else
      {
         fn = arr_fn[0];
         parameter_arr = arr_fn[1];
-        setTimeout(fn,100,parameter_arr);
+        setTimeout(fn,100,parameter_arr);  // 其余先放入后执行
         cursor++;
         setTimeout(execute,100);
      }

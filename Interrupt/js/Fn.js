@@ -20,7 +20,8 @@
   {  
      var str = SP.pop();// 
      var sp = document.getElementById("SP");
-     var Add = SP[ SP.length - 1 ];// 栈顶
+     var Add = SP[ SP.length - 1 ] || "##" ;       // 栈顶
+
      if( Add[0] == "#" && Add[1] == "#")  // 到达主函数底部了
      {
        Add = "0000";
@@ -51,7 +52,7 @@
       R.innerHTML = Complete_Four( num.toUpperCase() );
     }
 
-  }
+  }   
   function Complete_Four(str)
   {
     for (var i = str.length; i < 4; i++) {
@@ -132,7 +133,7 @@
               var R_First = Complete_Binary( Hex_To_Binary( Get_R(arr[0]) ) );
               var R_Second = Complete_Binary( Hex_To_Binary( Get_R(arr[1]) ) );
               ////  1000 0000 0001 0000
-             ////  1000 0001 0001 0001
+             ////  1000 0001 0001 0001 
                var Arr_First = R_First.split("");
                var Arr_Second = R_Second.split("");
                var ALU;
@@ -425,6 +426,7 @@
              if( add[0] == "#" && add[1] == "#")
              {  // ## 为主函数返回标志
                   console.log("main函数结束！");
+                  Finish();
                   cursor = -1;
                   return ; 
              }
