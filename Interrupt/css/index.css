@@ -7,7 +7,7 @@ p { color: white; font-family: 微软雅黑; line-height: 22px; min-height: 22px
 background: black; }
 #button_area { width: 34%; height: 100%; float: left; background: rgb(214,217,223);}
 #register { width:63%; height: 100%; float: left; background: blue}
-#register dd { background: yellow;margin-left: 4px; margin-top: 4px; float: left;} 
+#register dd { margin-left: 4px; margin-top: 4px; float: left;} 
 #register dd > span { width: 40px; height: 26px; margin-left: 4px;  background:rgb(255,255,255); }
 .rel { position: relative;}
 .abs { position: absolute;}
