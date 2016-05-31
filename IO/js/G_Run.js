@@ -6,13 +6,13 @@ function G_Run()
   execute(this);  /// this.type 作为参数
 }
 
-function Finish(Obj)
+function Finish(obj)
 {  
-   var PC_Html = document.getElementById('PC');
-   PC_Html.innerHTML = Obj.cursor.toString(16)-1;
-   Obj.status = 0;
-   ReSet.call(Obj,"");
-   newLine.call(Obj,"> ");
+   var register_div = document.getElementById("register"+obj.num);
+   register_div.getElementsByClassName("PC")[0].innerHTML = obj.cursor.toString(16)-1;
+   obj.status = 0;
+   ReSet.call(obj,"");
+   newLine.call(obj,"> ");
 }
 
 function ReSet()
@@ -76,7 +76,7 @@ function execute(THIS)
      if( arr_fn == null)
      { 
        console.log("命令有错误,不继续执行！");
-       Finish(Obj);
+       Finish(THIS);
        return ;
      }
      else if( arr_fn[0] == MVRD ) // 当为MVRD的时候,指针再次移动指向其存储的值
@@ -89,7 +89,7 @@ function execute(THIS)
         else
         {  
            console.log("赋值数没有！");
-           Finish(Obj);
+           Finish(THIS);
            return ;
         }
      }
@@ -103,7 +103,7 @@ function execute(THIS)
          else
          {
             console.log("未取到CALA的值.");
-            Finish(Obj);
+            Finish(THIS);
             return ;
          }
      }
@@ -124,13 +124,23 @@ function execute(THIS)
          Cursor_Jump.call( THIS, parseInt(arr_fn[1][0],16) );
          setTimeout(execute,100,THIS);
        }
+       else
+       {
+          THIS.cursor++;
+          setTimeout(execute,100,THIS);
+       }
      }
      else if( arr_fn[0] == JRNC)
      {
-       if( THIS.C == '0')
+       if( THIS.C == '0' )
        {
          Cursor_Jump.call( THIS, parseInt(arr_fn[1][0],16) );
          setTimeout(execute,100,THIS);
+       }
+       else
+       {
+          THIS.cursor++;
+          setTimeout(execute,100,THIS);
        }
      }
      else if( arr_fn[0] == JRZ)
@@ -140,12 +150,22 @@ function execute(THIS)
           Cursor_Jump.call( THIS , parseInt(arr_fn[1][0],16) );
           setTimeout(execute,100,THIS);
        }
+       else
+       {
+          THIS.cursor++;
+          setTimeout(execute,100,THIS);
+       }
      }
      else if( arr_fn[0] == JRNZ)
      {
        if ( THIS.Z =='0') 
        {
           Cursor_Jump.call( THIS , parseInt(arr_fn[1][0],16) );
+          setTimeout(execute,100,THIS);
+       }
+       else
+       {
+          THIS.cursor++;
           setTimeout(execute,100,THIS);
        }
      }

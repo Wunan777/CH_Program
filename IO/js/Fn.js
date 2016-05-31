@@ -1,15 +1,16 @@
  //////////////// 与硬件接口
-  function Stack_Push(Add)
+  function Stack_Push(Add,obj)
   { 
     // alert(Add); //push(R0) 0-9A-F{1,4} CALA 10进制  中断 $0#0-9A-F{1,4}
-    SP.push(Add);
-    var sp = document.getElementById("SP");
-
-    if(Add[0] == "#")
+    obj.SP.push(Add);
+    // obj.num 
+    var register_div = document.getElementById("register"+obj.num);
+    var sp = register_div.getElementsByClassName("SP")[0];
+    if( Add[0] == "#" )
     { 
       Add = parseInt( Add.slice(1) ).toString(16).toUpperCase();
     }
-    else if(Add[0] == "$")
+    else if( Add[0] == "$" )
     {
       Add = parseInt( Add.slice(3) ).toString(16).toUpperCase();
     }
@@ -20,9 +21,9 @@
   {  
      var str = obj.SP.pop();//
      var register_div = document.getElementById("register"+obj.num);
-     var sp = register_div.getElementsByClassName("SP");
-     var Add = obj.SP[ SP.length - 1 ];// 栈顶
-     if( Add[0] == undefined)
+     var sp = register_div.getElementsByClassName("SP")[0];
+     var Add = obj.SP[ obj.SP.length - 1 ];// 栈顶
+     if(  Add == undefined )
      {
          // SP中无值
         ///值为undefined
@@ -46,34 +47,57 @@
   }
   function Get_R(r_num,obj)
   { 
-    return obj.R_Arr["R"+r_num];
+     return obj.R_Arr["R"+r_num];
   }
   function Set_R(r_num,num,obj)
   {  // R后的数字10进制  200F 16进制
     var register_div = document.getElementById("register" + obj.num);
-    var R = register_div.getElementsByClassName("R"+r_num);
-    console.dir(R);
+    var R = register_div.getElementsByClassName("R"+r_num)[0];
     if( obj.R_Arr["R"+r_num] != undefined )
     {
       obj.R_Arr["R"+r_num] = num.toUpperCase();
       R.innerHTML = Complete_Four( num.toUpperCase() );
     }
   }
-  function Get_C()
+  function Get_C(obj)
   {
-     return C;
+      return obj.C;
   }
-  function Set_C(str_num)
+  function Set_C(str_num,obj)
   {
-     C = str_num;
+     obj.C = str_num;
   }
-  function Get_Z()
+  function Check_C(str,obj)
   {
-     return Z;
+      if( str.length > 16)
+      {
+          str = str.slice(1);
+          Set_C('1',obj);
+      }
+      else
+      {
+          Set_C('0',obj);
+      }
   }
-  function Set_Z(str_num)
+  function Get_Z(obj)
   {
-     Z = str_num;
+     return obj.Z;
+  }
+  function Set_Z(str_num,obj)
+  {
+     obj.Z = str_num;
+  }
+  function Check_Z(str,obj)
+  {
+     /// ALU == 0 -> Z = '1' ; 
+     if( parseInt(str) == 0)
+     {
+       Set_Z("1",obj);
+     }
+     else
+     {
+       Set_Z("0",obj);
+     }
   }
   function Get_Port(port_num)
   {
@@ -83,6 +107,8 @@
   {
     PORT[port_num] =  num;
   }
+
+
   function Complete_Four(str)
   {
     for (var i = str.length; i < 4; i++) {
@@ -90,10 +116,6 @@
     }
     return str;
   }
-
-
-
-
   function  Hex_To_Binary(hex)
   {
     return parseInt(hex,16).toString(2);
@@ -151,10 +173,10 @@
             //要赋值的数字 arr[1];  
             Set_R(arr[0],arr[1],obj);
          }
-         function ADD(arr)
+         function ADD(arr,obj)
          {
-              var R_First = Complete_Binary( Hex_To_Binary( Get_R(arr[0]) ) );
-              var R_Second = Complete_Binary( Hex_To_Binary( Get_R(arr[1]) ) );
+              var R_First  = Complete_Binary( Hex_To_Binary( Get_R(arr[0],obj) ) );
+              var R_Second = Complete_Binary( Hex_To_Binary( Get_R(arr[1],obj) ) );
               ////  1000 0000 0001 0000
              ////  1000 0001 0001 0001
                var Arr_First = R_First.split("");
@@ -162,15 +184,15 @@
                var ALU;
                // 迭代求C
               for (var i = 15; i >= 0; i--) 
-              {   // 1000 0000 0001 0000
+              {    // 1000 0000 0001 0000
                    // 1000 0001 0001 0001
-                  if( ( parseInt(Arr_First[i]) + parseInt(Arr_Second[i]) + parseInt( Get_C() ) ) > 1 ) 
+                  if( ( parseInt(Arr_First[i]) + parseInt(Arr_Second[i]) + parseInt( Get_C(obj) ) ) > 1 ) 
                   {
-                     Set_C("1");
+                     Set_C("1",obj);
                   }
                   else
                   {
-                     Set_C("0");
+                     Set_C("0",obj);
                   }
               }
               ALU = (parseInt( R_First,2) + parseInt( R_Second,2 ) ).toString(2);
@@ -179,52 +201,40 @@
                  ALU = ALU.slice(1,17);
               }
              ALU = parseInt(ALU,2).toString(16).toUpperCase();
-             Set_R(arr[0],ALU);
-             /// ALU == 0 -> Z = '1' ; 
-             if( parseInt(ALU) == 0)
-             {
-               Z = "1";
-             }
-             else{
-              Z = "0";
-             }
+             Set_R(arr[0],ALU,obj);
+             Check_Z(ALU,obj);
+
          }
-         function SUB(arr)
+         function SUB(arr,obj)
          {
             // 被减数寄存器的值存为负数
-            Set_R( arr[1] , Get_Minus( Get_R(arr[1]) )  );///// 还需要改回来
-            ADD(arr);
-            Set_R( arr[1] , Get_Minus( Get_R(arr[1]) )  );
+            Set_R( arr[1] , Get_Minus( Get_R(arr[1]) ) , obj );///// 还需要改回来
+            ADD(arr,obj);
+            Set_R( arr[1] , Get_Minus( Get_R(arr[1]) ) , obj );
          }
-         function CMP(arr)
+         function CMP(arr,obj)
          {
               // arr[0] arr[1]
-             var res = parseInt( Get_R(arr[0]) , 16 ) - parseInt( Get_R(arr[1]) , 16 );
+             var res = parseInt( Get_R(arr[0] , obj) , 16 ) - parseInt( Get_R(arr[1] , obj) , 16 );
 
              if( res > 0 )        
              {
-               Set_C("1");
+               Set_C("1",obj);
              }
              else
              {
-               Set_C("0");
+               Set_C("0",obj);
              }
 
-             if( res == 0)
-             {
-               Set_Z("1");
-             }
-             else
-             {
-               Set_Z("0");
-             }
+             Check_Z(res,obj);
          }
-         function AND(arr)
+         function AND(arr,obj)
          {
-            var R_First = Complete_Binary( Hex_To_Binary( Get_R(arr[0]) ) );
-            var R_Second = Complete_Binary( Hex_To_Binary( Get_R(arr[1]) ) );
+            var R_First  = Complete_Binary( Hex_To_Binary( Get_R(arr[0],obj) ) );
+            var R_Second = Complete_Binary( Hex_To_Binary( Get_R(arr[1],obj) ) );
             var str = "";
-              for (var i = 0; i < R_First.length; i++) {
+              for (var i = 0; i < R_First.length; i++) 
+              {
                 if( R_First[i] == '1' && R_Second[i] == '1')
                 {
                   str = str + "1";
@@ -233,13 +243,13 @@
                   str = str + "0";
                 }
               };
-              Check_Z(str);
-              Set_R( arr[0] , Binary_To_Hex(str) );
+              Check_Z(str,obj);
+              Set_R( arr[0] , Binary_To_Hex(str) ,obj);
          }         
          function XOR(arr)
          {
-           var R_First = Complete_Binary( Hex_To_Binary( Get_R(arr[0]) ) );
-           var R_Second = Complete_Binary( Hex_To_Binary( Get_R(arr[1]) ) );
+           var R_First  = Complete_Binary( Hex_To_Binary( Get_R(arr[0] , obj ) ) );
+           var R_Second = Complete_Binary( Hex_To_Binary( Get_R(arr[1] , obj ) ) );
            var str = "";
            for (var i = 0; i < R_First.length; i++) {
             if( R_First[i] ==  R_Second[i] )
@@ -250,13 +260,13 @@
               str = str + "1";
             }
            };
-           Check_Z(str);
-           Set_R( arr[0] , Binary_To_Hex(str) );
+           Check_Z(str,obj);
+           Set_R( arr[0] , Binary_To_Hex(str) , obj );
          }
          function TEST(arr)
          {
-            var R_First = Complete_Binary( Hex_To_Binary( Get_R(arr[0]) ) );
-            var R_Second = Complete_Binary( Hex_To_Binary( Get_R(arr[1]) ) );
+            var R_First  = Complete_Binary( Hex_To_Binary( Get_R( arr[0] , obj ) ) );
+            var R_Second = Complete_Binary( Hex_To_Binary( Get_R( arr[1] , obj ) ) );
             var str = "";
                for (var i = 0; i < R_First.length; i++) 
                {
@@ -269,12 +279,12 @@
                     str = str + "0";
                   }
                }
-               Check_Z(str);
+               Check_Z(str,obj);
          }
          function OR(arr)
          {
-            var R_First = Complete_Binary( Hex_To_Binary( Get_R(arr[0]) ) );
-            var R_Second = Complete_Binary( Hex_To_Binary( Get_R(arr[1]) ) );
+            var R_First  = Complete_Binary( Hex_To_Binary( Get_R( arr[0] , obj ) ) );
+            var R_Second = Complete_Binary( Hex_To_Binary( Get_R( arr[1] , obj ) ) );
             var str = "";
             for (var i = 0; i < R_First.length; i++) {
               if( R_First[i] == '1' || R_Second[i] == '1' )
@@ -285,127 +295,86 @@
                 str = str + "0";
               }
             };
-            Check_Z(str);
-            Set_R( arr[0] , Binary_To_Hex(str) );
+            Check_Z(str,obj);
+            Set_R( arr[0] , Binary_To_Hex(str) , obj );
          }
-         function MVRR(arr)
+         function MVRR(arr,obj)
          {   
             // arr[0] dr arr[1] sr
-            Set_R( arr[0] , Get_R(arr[1]) );
+            Set_R( arr[0] , Get_R( arr[1] , obj ) ,obj );
          }
-         function DEC(arr)
+         function DEC(arr,obj)
          {
               //arr[0]
               // 减1加FFFF
-              var str =  Hex_To_Binary( (parseInt( Get_R(arr[0]),16 ) + parseInt("FFFF",16) ).toString(16) );
-              if( str.length > 16)
-              {
-                  str = str.slice(1);
-                  Set_C('1');
-              }
-              else
-              {
-                  Set_C('0');
-              }
-
-              if( parseInt(str) == 0)
-              {
-                  Set_Z("1");
-              }
-              else
-              {
-                  Set_Z("0");
-              }
-                Set_R(arr[0], Binary_To_Hex(str) );
-
+              var str =  Hex_To_Binary( (parseInt( Get_R( arr[0] , obj ) , 16 ) + parseInt("FFFF",16) ).toString(16) );
+              Check_C(str,obj);
+              Check_Z(str,obj);
+              Set_R( arr[0], Binary_To_Hex(str), obj );
          }
-         function INC(arr)
+         function INC(arr,obj)
          {
               //arr[0] 0
-              var str =  Hex_To_Binary( (parseInt( Get_R(arr[0]),16 )+1).toString(16) );
-              if( str.length > 16)
-              {
-                  str = str.slice(1);
-                  Set_C('1');
-              }
-              else
-              {
-                  Set_C('0');
-              }
-
-              if( parseInt(str) == 0)
-              {
-                  Set_Z("1");
-              }
-              else
-              {
-                  Set_Z("0");
-              }
-
-              Set_R(arr[0], Binary_To_Hex(str) );
+              var str =  Hex_To_Binary( (parseInt( Get_R( arr[0], obj),16 )+1).toString(16) );
+              Check_C(str,obj);
+              Check_Z(str,obj);
+              Set_R( arr[0], Binary_To_Hex(str), obj);
          }
-         function SHR(arr)  /// 无符号左移
+         function SHR(arr,obj)  /// 无符号左移
          {
-                  var str = "";
-                  //获得R0
-                  var R = Get_R( arr[0] );
+                var str = "";
+                //获得R0
+                var R = Get_R( arr[0] , obj);
+                //
+                str = Complete_Binary(  Hex_To_Binary(R) );
+                Set_C( str.slice(0,1) ,obj );  // 0001 0000 0000 0000 取最高位第一个
+                str = str.slice(1,str.length)+"0" ;
+                str = Binary_To_Hex(str);
 
-                  //
-                  str = Complete_Binary(  Hex_To_Binary(R) );
-                  Set_C( str.slice(0,1) );  // 0001 0000 0000 0000 取最高位第一个
-                  str = str.slice(1,str.length)+"0" ;
-                  str = Binary_To_Hex(str);
-
-                  parseInt(str) == 0 ? Z = "1" :Z = "0";
-                  //设置R0
-                  Set_R( arr[0] , str );
+                Check_Z(str,obj);
+                //设置R0
+                Set_R( arr[0] , str ,obj);
          }
-         function SHL(arr) // 无符号右移
+         function SHL(arr,obj) // 无符号右移
          {  
             var str = "";
-            var R = Get_R( arr[0] );
+            var R = Get_R( arr[0] , obj);
             str = Complete_Binary( Hex_To_Binary(R) );
             /// 0000 0000 1000 1100
             str = "0" + str.slice(0,str.length-1);
             str = Binary_To_Hex(str);
-            Set_R(arr[0],str);
+            Set_R( arr[0], str, obj);
          }
-
-
-         function IN(arr)
+         function IN(arr,obj)
          { 
             // arr[0] -> 80/81
             // PORT[] -> R0
-            Set_R( '0', Get_Port(arr[0]) );
+            Set_R( '0', Get_Port(arr[0]) , obj);
          } 
-         function PUSH(arr)
+         function PUSH(arr,obj)
          { 
               // R -> SP
-             Stack_Push( Get_R(arr[0]) );
+             Stack_Push( Get_R(arr[0]) , obj);
          }
-         function POP(arr)
-         {    // SP -> R
-              Set_R( arr[0] , Stack_Pop() );
+         function POP(arr,obj)
+         {  
+            // SP -> R
+            Set_R( arr[0] , Stack_Pop(obj) ,obj);
          }
          function OUT(arr,obj)
          {  
              var port_num = arr[0]; //80
              Set_Port( port_num , Get_R("0",obj) );
              ///////// 模拟外设输出
-             //console.log( "R0" + Get_R('0') + " PORT_80 " + Get_Port(arr[0]) );
              console.log( "输出 : " + String.fromCharCode( parseInt(Get_Port(port_num),16)) ); 
-            
              AddCharToLastLine.call(obj, String.fromCharCode( parseInt(Get_Port(port_num),16) ) );
              /////////
              var t = Complete_Binary( Hex_To_Binary( Get_Port("81") ) );
              // t 0100 0000 0000 0000
              Set_Port("81", Binary_To_Hex( "1" + t.slice(1) ) );
          }
-
-
-         function RET()
+         function RET(arr,obj)
          {   
-             var obj = arguments[1]; // THIS
              var add = Stack_Pop(obj);
              if( add[0] == "#" && add[1] == "#")
              {  // ## 为主函数返回标志
@@ -427,24 +396,24 @@
                console.log("错误的返回值！");
              }
          }
-         function CALA(arr)
+         function CALA(arr,obj)
          { //arr[0] 地址
-           Stack_Push( "#" + cursor);
-           cursor = parseInt( arr[0], 16);
-           console.log( cursor );
-           console.log( memory[cursor] );
+           Stack_Push( "#" + obj.cursor, obj);
+           obj.cursor = parseInt( arr[0], 16);
+           console.log( obj.cursor );
+           console.log( obj.memory[obj.cursor] );
          }
-         function EI()
+         function EI(obj)
          {
-           FLAG = 1;
+           obj.FLAG = 1;
          }
-         function DI()
+         function DI(obj)
          {
-           FLAG = 0;
+           obj.FLAG = 0;
          }
-         function IRET(arr)
+         function IRET(arr,obj)
          {  
-            RET();
+           RET(arr,obj);
          }
 
          function JR(){}
